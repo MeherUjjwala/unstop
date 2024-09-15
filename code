@@ -1,0 +1,51 @@
+class TrainCoach:
+    def __init__(self):
+        self.seats = [False] * 80  # False indicates the seat is available
+
+    def display_seats(self):
+        for i in range(0, 80, 7):
+            row = self.seats[i:i+7]
+            print(' '.join(['X' if seat else 'O' for seat in row]))
+        print(' '.join(['X' if seat else 'O' for seat in self.seats[77:]]))
+
+    def book_seats(self, num_seats):
+        if num_seats > 7:
+            print("Cannot book more than 7 seats at a time.")
+            return
+
+        for i in range(0, 80, 7):
+            if i == 77:  # Last row with only 3 seats
+                row = self.seats[77:]
+            else:
+                row = self.seats[i:i+7]
+
+            if row.count(False) >= num_seats:
+                for j in range(num_seats):
+                    self.seats[i + j] = True
+                print(f"Booked seats: {list(range(i + 1, i + 1 + num_seats))}")
+                return
+
+        # If no single row has enough seats, book nearby seats
+        booked_seats = []
+        for i in range(80):
+            if not self.seats[i]:
+                self.seats[i] = True
+                booked_seats.append(i + 1)
+                if len(booked_seats) == num_seats:
+                    break
+        print(f"Booked seats: {booked_seats}")
+
+def main():
+    coach = TrainCoach()
+    while True:
+        coach.display_seats()
+        try:
+            num_seats = int(input("Enter the number of seats to book (0 to exit): "))
+            if num_seats == 0:
+                break
+            coach.book_seats(num_seats)
+        except ValueError:
+            print("Please enter a valid number.")
+
+if __name__ == "__main__":
+    main()
